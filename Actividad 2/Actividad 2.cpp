@@ -12,7 +12,12 @@ using std::filesystem::directory_iterator;
 using std::ofstream;
 using std::fstream;
 
+//Metodos de actividades
 void MayusToMinus(string rutaPorOrdenar, string nombreArchivo);
+
+//Variables de tiempo
+double t0, t1, tt0, tt1;
+double tTotal = 0, tProceso = 0;
 
 int main()
 {
@@ -30,6 +35,10 @@ int main()
 			switch (opcion)
 			{
 			case 1:
+				tt0 = clock();
+				log.open("Mayusculas a minusculas.txt", std::ofstream::trunc);
+				log.close();
+
 				string rutaLimpiosMayus = "D:\\Universidad\\OCTAVO SEMESTRE\\Proyectos de ingenieria\\Actividad 1\\Ordenar_palabras";
 				//log.open("mayusculas-minusculas.txt", std::ofstream::trunc);
 				//log.close();
@@ -38,6 +47,15 @@ int main()
 					string nombreArchivo = file.path().filename().string();
 					MayusToMinus(file.path().string(), nombreArchivo);
 				}
+
+				log.open("Mayusculas a minusculas.txt", std::ofstream::app);
+				tt1 = clock();
+				tProceso = ((tt1 - tt0) / CLOCKS_PER_SEC);
+				cout << "\n" << "El tiempo total de ordenar y pasar de mayusculas a minusculas es: " << tTotal << endl;
+				cout << "\n" << "El tiempo total del proceso es: " << tProceso << endl;
+				log << endl << "El tiempo total de ordenar y pasar de mayusculas a minusculas es: " << tTotal << endl;
+				log << endl << "El tiempo total del proceso es: " << tProceso << endl;
+				log.close();
 				break;
 			}
 
@@ -61,6 +79,8 @@ void MayusToMinus (string rutaPorOrdenar, string nombreArchivo){
 		exit(1);
 	}
 
+	t0 = clock();
+	log.open("Mayusculas a minusculas.txt", ofstream::app);
 	ifstream archivosPorOrdenar(rutaPorOrdenar);
 
 	if (archivosPorOrdenar)
@@ -77,7 +97,6 @@ void MayusToMinus (string rutaPorOrdenar, string nombreArchivo){
 				{
 					//Recorres caracter por caracter para pasar a minuscula
 					linea[i] = tolower(linea[i]);
-					//archivosMayusToMinus << linea[i];
 				}
 
 				textoLinea.push_back(linea);
@@ -85,6 +104,7 @@ void MayusToMinus (string rutaPorOrdenar, string nombreArchivo){
 
 			sort(textoLinea.begin(), textoLinea.end());
 
+			//Ciclo para escribir el vector sorteado al nuevo archivo
 			for (vector <string>::const_iterator i = textoLinea.begin(); i != textoLinea.end(); i++)
 			{
 				if (i->length() == 0)
@@ -97,7 +117,7 @@ void MayusToMinus (string rutaPorOrdenar, string nombreArchivo){
 				}
 			}
 
-			//archivosMayusToMinus << endl;
+			
 			getline(archivosPorOrdenar, linea);
 		} //CIERRA WHILE
 
@@ -107,5 +127,10 @@ void MayusToMinus (string rutaPorOrdenar, string nombreArchivo){
 	{
 		cout << "No se pueden abrir los archivos: " << endl;
 	}
-	
+	t1 = clock();
+	double tiempo = ((t1 - t0) / CLOCKS_PER_SEC);
+	cout << "Tiempo de pasar de mayusculas a minusculas y ordenar: " << fixed << setprecision(4) << tiempo << endl;
+	tTotal += tiempo;
+	log << rutaPorOrdenar << "    Tiempo de pasar de mayusculas a minusculas y ordenar: " << fixed << setprecision(4) << tiempo << endl;
+	log.close();
 }
